@@ -1,0 +1,6 @@
+2d.png
+3d.png
+.idea
+.vscode
+*/__pycache__/
+*.png
