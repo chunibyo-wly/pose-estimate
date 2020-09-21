@@ -2,5 +2,7 @@
 3d.png
 .idea
 .vscode
+__pycache__
 */__pycache__/
 *.png
+.git
