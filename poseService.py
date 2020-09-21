@@ -49,13 +49,8 @@ class PoseService:
         pass
 
     def get_pose(self):
-        # frame_provider =
-
         if self.image is None:
             return []
-
-        canvas_3d = np.zeros((720, 1280, 3), dtype=np.uint8)
-        plotter = Plotter3d(canvas_3d.shape[:2])
 
         input_scale = PoseService.base_height / self.image.shape[0]
         scaled_img = cv2.resize(self.image, dsize=None, fx=input_scale, fy=input_scale)
@@ -68,24 +63,12 @@ class PoseService:
         inference_result = PoseService.net.infer(scaled_img)
         poses_3d, poses_2d = parse_poses(inference_result, input_scale, PoseService.stride, PoseService.fx, False)
 
-        edges = []
         if len(poses_3d):
-            # poses_3d = rotate_poses(poses_3d, PoseService.R, PoseService.T)
-            poses_3d_copy = poses_3d.copy()
-            x = poses_3d_copy[:, 0::4]
-            y = poses_3d_copy[:, 1::4]
-            z = poses_3d_copy[:, 2::4]
-            # poses_3d[:, 0::4], poses_3d[:, 1::4], poses_3d[:, 2::4] = -z, x, -y
-
             poses_3d = poses_3d.reshape(poses_3d.shape[0], 19, -1)[:, :, 0:3]
-        #     edges = (Plotter3d.SKELETON_EDGES + 19 * np.arange(poses_3d.shape[0]).reshape((-1, 1, 1))).reshape((-1, 2))
-        #
-        # plotter.plot(canvas_3d, poses_3d, edges)
-        # cv2.imwrite("3d.png", canvas_3d)
-        #
-        draw_poses(self.image, poses_2d)
-        
-        cv2.imwrite('2d.png', self.image)
+
+        # draw_poses(self.image, poses_2d)
+
+        # cv2.imwrite('2d.png', self.image)
 
         if poses_3d.size == 0 or poses_2d.size == 0:
             return {"pose2D": [], "pose3D": []}
